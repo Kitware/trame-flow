@@ -18,4 +18,7 @@ export default {
     outDir: "../src/trame_flow/module/serve",
     assetsDir: ".",
   },
+  define: {
+    "process.env": { NODE_ENV: "production" },
+  },
 };

@@ -1,4 +1,4 @@
-from trame_flow.widgets.flow import *
+from trame_flow.widgets.flow import *  # noqa: F403
 
 
 def initialize(server):

@@ -1,5 +1,5 @@
-import CustomWidget from './CustomWidget';
+import NodeEditor from "./NodeEditor";
 
 export default {
-  'yourCustomWidget':CustomWidget,
+  NodeEditor,
 };

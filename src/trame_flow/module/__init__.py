@@ -23,4 +23,3 @@ vue_use = ["trame_flow"]
 # Optional if you want to execute custom initialization at module load
 def setup(app, **kwargs):
     """Method called at initialization with possibly some custom keyword arguments"""
-    pass
