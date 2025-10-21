@@ -33,7 +33,7 @@ export default {
     };
   },
   template: `
-    <vue-flow>
+    <vue-flow elevate-edges-on-select="true">
       <background :variant="backgroundPatternVariant" :pattern-color="backgroundPatternColor" :size="backgroundPatternSize" :gap="backgroundPatternGap" />
       <mini-map />
     </vue-flow>

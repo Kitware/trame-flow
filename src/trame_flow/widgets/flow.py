@@ -1,5 +1,5 @@
 from ast import literal_eval
-from typing import Callable, Literal, Optional, TypedDict
+from typing import Callable, Literal, Optional, TypedDict, Union
 
 from trame_client.widgets.core import AbstractElement
 
@@ -14,14 +14,18 @@ class HtmlElement(AbstractElement):
 
 
 __all__ = [
+    "DEFAULT_EXTENT",
     "Dimensions",
     "Edge",
     "EdgeType",
+    "Extent",
     "Graph",
     "Node",
     "NodeEditor",
     "NodeType",
     "Position",
+    "create_edge",
+    "create_node",
 ]
 
 
@@ -34,6 +38,10 @@ class Dimensions(TypedDict):
     height: float
     width: float
 
+
+# "parent" or [[x-from, y-from], [x-to, y-to]]
+Extent = Union[Literal["parent"], list[list[float]]]
+DEFAULT_EXTENT = [[float("-inf"), float("-inf")], [float("+inf"), float("+inf")]]
 
 NodeType = Literal["default", "input", "output"]
 
@@ -48,6 +56,43 @@ class Node(TypedDict):
     data: NodeData
     position: Position
     draggable: bool
+    parentNode: Optional[str]
+    expandParent: Optional[bool]
+    extent: Extent
+    width: int
+    height: int
+    style: Optional[dict]
+
+
+def create_node(
+    id: str,
+    type: NodeType,
+    x: float,
+    y: float,
+    label: str,
+    parent_id: Optional[str] = None,
+    expand_parent: bool = False,
+    extent: Extent = DEFAULT_EXTENT,
+    width: int = 150,
+    height: int = 40,
+    style: Optional[dict] = None,
+) -> Node:
+    node = Node(
+        id=id,
+        type=type,
+        data=NodeData(label=label),
+        position=Position(x=x, y=y),
+        draggable=True,
+        parentNode=parent_id,
+        expandParent=expand_parent,
+        extent=extent,
+        width=width,
+        height=height,
+        style=style,
+    )
+    if extent == "parent" and parent_id is None:
+        parent_id = ""
+    return node
 
 
 EdgeType = Literal["default", "step", "smoothstep", "straight"]
@@ -60,6 +105,23 @@ class Edge(TypedDict):
     type: EdgeType
     label: Optional[str]
     animated: bool
+
+
+def create_edge(
+    source_id: str,
+    target_id: str,
+    type: EdgeType = "default",
+    label: Optional[str] = None,
+    animated: bool = False,
+):
+    return Edge(
+        id=f"{source_id}->{target_id}",
+        source=source_id,
+        target=target_id,
+        type=type,
+        label=label,
+        animated=animated,
+    )
 
 
 class Graph(TypedDict):
@@ -183,14 +245,7 @@ class NodeEditor(HtmlElement):
         self.server.js_call(self.__ref, "setEdges", self._edges)
         self.graph_change(self._nodes, self._edges)
 
-    def add_node(self, id: str, type: NodeType, x: float, y: float, label: str):
-        node = Node(
-            id=id,
-            type=type,
-            data=NodeData(label=label),
-            position=Position(x=x, y=y),
-            draggable=True,
-        )
+    def add_node(self, node: Node):
         self._nodes.append(node)
         self.server.js_call(self.__ref, "addNodes", node)
         self.graph_change(self._nodes, self._edges)
@@ -236,3 +291,10 @@ class NodeEditor(HtmlElement):
         self._nodes = graph["nodes"]
         self._edges = graph["edges"]
         self._sync()
+
+    def update_node(self, node_id: str, **kwargs):
+        for node in self._nodes:
+            if node["id"] == node_id:
+                node.update(kwargs)
+                self._sync()
+                break

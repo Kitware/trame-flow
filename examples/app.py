@@ -1,16 +1,18 @@
 from trame.app import get_server
 from trame.decorators import TrameApp
 from trame.ui.vuetify3 import SinglePageLayout
-from trame.widgets.flow import NodeEditor
 from trame.widgets.vuetify3 import (
     VBtn,
+    VCheckbox,
     VCol,
     VContainer,
+    VNumberInput,
     VRow,
     VSelect,
     VTextarea,
     VTextField,
 )
+from trame_flow.widgets.flow import DEFAULT_EXTENT, NodeEditor, create_node
 
 
 class Example(TrameApp):
@@ -20,17 +22,37 @@ class Example(TrameApp):
         self.state.new_node_name = ""
         self.next_node_id = 0
 
+        @self.state.change("selected_resize_node_id")
+        def _on_selected_resize_node_id_change(selected_resize_node_id, **_):
+            node = self.vueflow.get_node(selected_resize_node_id)
+            if node:
+                self.state.resize_node_width = node["width"]
+                self.state.resize_node_height = node["height"]
+
+        @self.state.change("resize_node_width", "resize_node_height")
+        def _on_resize(resize_node_width, resize_node_height, **_):
+            self.vueflow.update_node(
+                self.state.selected_resize_node_id,
+                width=resize_node_width,
+                height=resize_node_height,
+            )
+
     @property
     def state(self):
         return self.server.state
 
     def add_node(self):
         self.vueflow.add_node(
-            id=str(self.next_node_id),
-            x=0,
-            y=0,
-            type="default",
-            label=self.state.new_node_name,
+            create_node(
+                id=str(self.next_node_id),
+                x=0,
+                y=0,
+                type="default",
+                label=self.state.new_node_name,
+                parent_id=self.state.selected_parent_node_id,
+                extent="parent" if self.state.new_node_force_inside else DEFAULT_EXTENT,
+                expand_parent=self.state.new_node_expand_parent,
+            )
         )
         self.next_node_id += 1
         self.state.new_node_name = ""
@@ -58,7 +80,41 @@ class Example(TrameApp):
                         label="Node name",
                         v_model=("new_node_name", ""),
                     )
+                    VSelect(
+                        label="Parent",
+                        items=("nodes", []),
+                        item_title="data.label",
+                        item_value="id",
+                        v_model=("selected_parent_node_id", None),
+                        clearable=True,
+                    )
+                    VCheckbox(
+                        label="Expand parent",
+                        v_model=("new_node_expand_parent", False),
+                    )
+                    VCheckbox(
+                        label="Force inside parent",
+                        v_model=("new_node_force_inside", True),
+                    )
                     VBtn("Add Node", click=self.add_node)
+                with VCol():
+                    VSelect(
+                        label="Node",
+                        items=("nodes", []),
+                        item_title="data.label",
+                        item_value="id",
+                        v_model=("selected_resize_node_id", None),
+                    )
+                    VNumberInput(
+                        label="Width",
+                        v_model=("resize_node_width", 0),
+                        min=0,
+                    )
+                    VNumberInput(
+                        label="Height",
+                        v_model=("resize_node_height", 0),
+                        min=0,
+                    )
                 with VCol():
                     VSelect(
                         label="Node",
