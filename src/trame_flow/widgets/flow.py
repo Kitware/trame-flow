@@ -1,7 +1,8 @@
 from ast import literal_eval
-from typing import Callable, Literal, Optional, TypedDict, Union
+from typing import Callable, Literal, Optional, Union
 
 from trame_client.widgets.core import AbstractElement
+from typing_extensions import NotRequired, TypedDict
 
 from .. import module
 
@@ -17,6 +18,7 @@ __all__ = [
     "DEFAULT_EXTENT",
     "Dimensions",
     "Edge",
+    "EdgeMarkerType",
     "EdgeType",
     "Extent",
     "Graph",
@@ -43,25 +45,21 @@ class Dimensions(TypedDict):
 Extent = Union[Literal["parent"], list[list[float]]]
 DEFAULT_EXTENT = [[float("-inf"), float("-inf")], [float("+inf"), float("+inf")]]
 
-NodeType = Literal["default", "input", "output"]
-
-
-class NodeData(TypedDict):
-    label: str
+NodeType = Literal["default", "input", "output", "text"]
 
 
 class Node(TypedDict):
     id: str
     type: NodeType
-    data: NodeData
+    data: dict
     position: Position
     draggable: bool
-    parentNode: Optional[str]
-    expandParent: Optional[bool]
-    extent: Extent
-    width: int
-    height: int
-    style: Optional[dict]
+    parentNode: NotRequired[str]
+    expandParent: NotRequired[bool]
+    extent: NotRequired[Extent]
+    width: Union[int, str]
+    height: Union[int, str]
+    style: NotRequired[dict]
 
 
 def create_node(
@@ -72,30 +70,49 @@ def create_node(
     label: str,
     parent_id: Optional[str] = None,
     expand_parent: bool = False,
-    extent: Extent = DEFAULT_EXTENT,
-    width: int = 150,
-    height: int = 40,
+    extent: Optional[Extent] = None,
+    width: Union[int, str] = "auto",
+    height: Union[int, str] = "auto",
     style: Optional[dict] = None,
+    data: Optional[dict] = None,
 ) -> Node:
     node = Node(
         id=id,
         type=type,
-        data=NodeData(label=label),
+        data={"label": label},
         position=Position(x=x, y=y),
         draggable=True,
-        parentNode=parent_id,
         expandParent=expand_parent,
-        extent=extent,
         width=width,
         height=height,
-        style=style,
     )
+    if extent:
+        node["extent"] = extent
     if extent == "parent" and parent_id is None:
         parent_id = ""
+    if parent_id:
+        node["parentNode"] = parent_id
+    if style:
+        node["style"] = style
+    if data:
+        node["data"] = node["data"] | data
     return node
 
 
 EdgeType = Literal["default", "step", "smoothstep", "straight"]
+
+EdgeMarkerType = Literal["arrow", "arrowclosed"]
+
+
+class EdgeMarker(TypedDict):
+    color: NotRequired[str]
+    height: NotRequired[float]
+    id: NotRequired[str]
+    markerUnits: NotRequired[str]
+    orient: NotRequired[str]
+    strokeWidth: NotRequired[float]
+    type: EdgeMarkerType
+    width: NotRequired[float]
 
 
 class Edge(TypedDict):
@@ -103,8 +120,11 @@ class Edge(TypedDict):
     source: str
     target: str
     type: EdgeType
-    label: Optional[str]
-    animated: bool
+    label: NotRequired[str]
+    animated: NotRequired[bool]
+    markerStart: NotRequired[Union[EdgeMarkerType, EdgeMarker]]
+    markerEnd: NotRequired[Union[EdgeMarkerType, EdgeMarker]]
+    style: NotRequired[dict]
 
 
 def create_edge(
@@ -113,15 +133,26 @@ def create_edge(
     type: EdgeType = "default",
     label: Optional[str] = None,
     animated: bool = False,
+    marker_start: Optional[Union[EdgeMarkerType, EdgeMarker]] = None,
+    marker_end: Optional[Union[EdgeMarkerType, EdgeMarker]] = None,
+    style: Optional[dict] = None,
 ):
-    return Edge(
+    edge = Edge(
         id=f"{source_id}->{target_id}",
         source=source_id,
         target=target_id,
         type=type,
-        label=label,
         animated=animated,
     )
+    if label:
+        edge["label"] = label
+    if marker_start:
+        edge["markerStart"] = marker_start
+    if marker_end:
+        edge["markerEnd"] = marker_end
+    if style:
+        edge["style"] = style
+    return edge
 
 
 class Graph(TypedDict):
@@ -146,7 +177,7 @@ class NodeEditor(HtmlElement):
 
     _next_id = 0
 
-    def __init__(self, auto_connect=True, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(
             "node-editor",
             **kwargs,
@@ -182,15 +213,12 @@ class NodeEditor(HtmlElement):
         self.node_drag_stop = (lambda event: self.on_node_drag_stop(event), "[$event]")
         self.init = lambda: self._sync()
 
-        if auto_connect:
-            self.connect = (lambda event: self.on_connect(event), "[$event]")
+        self.connect = (lambda event: self.on_connect(event), "[$event]")
 
         self.graph_change: Callable[[list[Node], list[Edge]], None] = lambda *_: None
 
     def on_connect(self, event):
-        if not self.get_edge(event["source"], event["target"]) and not self.get_edge(
-            event["target"], event["source"]
-        ):
+        if not self.get_edge(source=event["source"], target=event["target"]):
             self.add_edge(
                 Edge(
                     source=event["source"],
@@ -198,7 +226,6 @@ class NodeEditor(HtmlElement):
                     id=f"{event['source']}->{event['target']}",
                     type="default",
                     animated=False,
-                    label="",
                 )
             )
 
@@ -287,14 +314,18 @@ class NodeEditor(HtmlElement):
         )
 
     def deserialize_graph(self, graph_str: str):
-        graph = literal_eval(graph_str)
-        self._nodes = graph["nodes"]
-        self._edges = graph["edges"]
-        self._sync()
+        try:
+            graph = literal_eval(graph_str)
+            self._nodes = graph["nodes"]
+            self._edges = graph["edges"]
+            self._sync()
+        except Exception as err:
+            error_msg = "Invalid graph string"
+            raise Exception(error_msg) from err
 
     def update_node(self, node_id: str, **kwargs):
         for node in self._nodes:
             if node["id"] == node_id:
-                node.update(kwargs)
+                node.update(**kwargs)
                 self._sync()
                 break

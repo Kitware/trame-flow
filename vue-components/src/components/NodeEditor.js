@@ -35,6 +35,11 @@ export default {
   template: `
     <vue-flow elevate-edges-on-select="true">
       <background :variant="backgroundPatternVariant" :pattern-color="backgroundPatternColor" :size="backgroundPatternSize" :gap="backgroundPatternGap" />
+
+      <template #node-text="nodeProps">
+        {{nodeProps.data.label}}
+      </template>
+
       <mini-map />
     </vue-flow>
   `,
