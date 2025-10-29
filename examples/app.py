@@ -12,7 +12,94 @@ from trame.widgets.vuetify3 import (
     VTextarea,
     VTextField,
 )
-from trame_flow.widgets.flow import DEFAULT_EXTENT, NodeEditor, create_node
+from trame_flow.widgets.flow import Node, NodeEditor, create_node
+
+example_graph_state = """{
+    "nodes": [
+        {
+            "id": "0",
+            "type": "input",
+            "data": {"label": "My input node"},
+            "position": {"x": 9.5, "y": 49.5},
+            "draggable": True,
+            "expandParent": False,
+            "width": "auto",
+            "height": "auto",
+            "extent": "parent",
+            "style": {
+                "background": "linear-gradient(40deg, lightgreen, blue)",
+            },
+        },
+        {
+            "id": "1",
+            "type": "output",
+            "data": {"label": "My output node"},
+            "position": {"x": 0, "y": 350},
+            "draggable": True,
+            "expandParent": False,
+            "width": "auto",
+            "height": "auto",
+            "extent": "parent",
+            "style": {
+                "border": "2px green dotted",
+            },
+        },
+        {
+            "id": "2",
+            "type": "default",
+            "data": {"label": "My parent node"},
+            "position": {"x": -43.5, "y": 205.51916885375977},
+            "draggable": True,
+            "width": 200,
+            "height": 100,
+        },
+        {
+            "id": "3",
+            "type": "default",
+            "data": {"label": "My child node"},
+            "position": {"x": 50, "y": 50},
+            "draggable": True,
+            "width": "auto",
+            "height": "auto",
+            "parentNode": "2",
+            "extent": "parent",
+        },
+    ],
+    "edges": [
+        {
+            "source": "0",
+            "target": "2",
+            "id": "0->2",
+            "type": "default",
+            "animated": False,
+            "markerEnd": {
+                "type": "arrowclosed",
+                "width": 50,
+                "height": 50,
+                "color": "red",
+            },
+            "style": {
+                "stroke": "orange",
+            },
+        },
+        {
+            "source": "2",
+            "target": "1",
+            "id": "2->1",
+            "type": "default",
+            "animated": True,
+            "markerEnd": {
+                "type": "arrow",
+                "width": 20,
+                "height": 20,
+                "color": "magenta",
+            },
+            "style": {
+                "stroke": "purple",
+            },
+        },
+    ],
+}"""
 
 
 class Example(TrameApp):
@@ -50,7 +137,7 @@ class Example(TrameApp):
                 type="default",
                 label=self.state.new_node_name,
                 parent_id=self.state.selected_parent_node_id,
-                extent="parent" if self.state.new_node_force_inside else DEFAULT_EXTENT,
+                extent="parent" if self.state.new_node_force_inside else None,
                 expand_parent=self.state.new_node_expand_parent,
             )
         )
@@ -72,7 +159,10 @@ class Example(TrameApp):
         with SinglePageLayout(self.server) as layout:
             layout.title.set_text("trame-flow example")
             with layout.toolbar:
-                pass
+                VBtn(
+                    "Show Example",
+                    click=lambda: self.vueflow.deserialize_graph(example_graph_state),
+                )
 
             with layout.content, VContainer(), VRow():
                 with VCol():
@@ -151,6 +241,11 @@ class Example(TrameApp):
                 self.state.dirty("edges")
 
             self.vueflow.graph_change = on_graph_change
+
+            def on_node_click(node: Node):
+                print(f'Clicked on node "{node["data"]["label"]}" (id={node["id"]})')  # noqa: T201
+
+            self.vueflow.node_click = (on_node_click, "[$event.node]")
 
 
 # Main
