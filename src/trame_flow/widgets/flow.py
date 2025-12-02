@@ -108,6 +108,9 @@ def create_node(
         node["style"] = style
     if data:
         node["data"] = node["data"] | data
+    # set "text" node default css
+    if type == "text":
+        node["class"] = "vue-flow__node-default"
     return node
 
 
