@@ -7,6 +7,7 @@ authors = [
 ]
 dependencies = [
     "trame_client>=3.10",
+    "typing-extensions>=4.10.0",
 ]
 requires-python = ">=3.9"
 readme = "README.rst"
@@ -36,6 +37,10 @@ dev = [
     "pytest >=6",
     "pytest-cov >=3",
     "nox",
+]
+examples = [
+    "trame>=3.12.0",
+    "trame-vuetify>=3.1.0",
 ]
 
 [build-system]
@@ -105,6 +110,6 @@ version_variables = [
 
 build_command = "uv build"
 
-[semantic_release.publish]
+[tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
 upload_to_vcs_release = true
