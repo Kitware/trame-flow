@@ -22,6 +22,7 @@ __all__ = [
     "EdgeType",
     "Extent",
     "Graph",
+    "HandlePosition",
     "Node",
     "NodeEditor",
     "NodeType",
@@ -36,6 +37,9 @@ class Position(TypedDict):
     y: float
 
 
+HandlePosition = Literal["top", "bottom", "left", "right"]
+
+
 class Dimensions(TypedDict):
     height: float
     width: float
@@ -48,18 +52,26 @@ DEFAULT_EXTENT = [[float("-inf"), float("-inf")], [float("+inf"), float("+inf")]
 NodeType = Literal["default", "input", "output", "text"]
 
 
-class Node(TypedDict):
-    id: str
-    type: NodeType
-    data: dict
-    position: Position
-    draggable: bool
-    parentNode: NotRequired[str]
-    expandParent: NotRequired[bool]
-    extent: NotRequired[Extent]
-    width: Union[int, str]
-    height: Union[int, str]
-    style: NotRequired[dict]
+Node = TypedDict(
+    "Node",
+    {
+        "id": str,
+        "type": NodeType,
+        "data": dict,
+        "position": Position,
+        "draggable": bool,
+        "connectable": NotRequired[bool],
+        "parentNode": NotRequired[str],
+        "expandParent": NotRequired[bool],
+        "extent": NotRequired[Extent],
+        "sourcePosition": NotRequired[HandlePosition],
+        "targetPosition": NotRequired[HandlePosition],
+        "width": Union[int, str],
+        "height": Union[int, str],
+        "style": NotRequired[dict],
+        "class": NotRequired[str],
+    },
+)
 
 
 def create_node(
