@@ -55,21 +55,27 @@ NodeType = Literal["default", "input", "output", "text"]
 Node = TypedDict(
     "Node",
     {
-        "id": str,
-        "type": NodeType,
-        "data": dict,
-        "position": Position,
-        "draggable": bool,
+        "ariaLabel": NotRequired[str],
+        "class": NotRequired[str],
         "connectable": NotRequired[bool],
-        "parentNode": NotRequired[str],
+        "data": NotRequired[dict],
+        "deletable": NotRequired[bool],
+        "draggable": NotRequired[bool],
         "expandParent": NotRequired[bool],
         "extent": NotRequired[Extent],
-        "sourcePosition": NotRequired[HandlePosition],
-        "targetPosition": NotRequired[HandlePosition],
-        "width": Union[int, str],
+        "focusable": NotRequired[bool],
         "height": Union[int, str],
+        "hidden": NotRequired[bool],
+        "id": str,
+        "parentNode": NotRequired[str],
+        "position": Position,
+        "selectable": NotRequired[bool],
+        "sourcePosition": NotRequired[HandlePosition],
         "style": NotRequired[dict],
-        "class": NotRequired[str],
+        "targetPosition": NotRequired[HandlePosition],
+        "type": NodeType,
+        "width": Union[int, str],
+        "zIndex": NotRequired[int],
     },
 )
 
@@ -88,12 +94,12 @@ def create_node(
     style: Optional[dict] = None,
     data: Optional[dict] = None,
 ) -> Node:
+    """Helper function to build a Node."""
     node = Node(
         id=id,
         type=type,
         data={"label": label},
         position=Position(x=x, y=y),
-        draggable=True,
         expandParent=expand_parent,
         width=width,
         height=height,
@@ -130,16 +136,34 @@ class EdgeMarker(TypedDict):
     width: NotRequired[float]
 
 
-class Edge(TypedDict):
-    id: str
-    source: str
-    target: str
-    type: EdgeType
-    label: NotRequired[str]
-    animated: NotRequired[bool]
-    markerStart: NotRequired[Union[EdgeMarkerType, EdgeMarker]]
-    markerEnd: NotRequired[Union[EdgeMarkerType, EdgeMarker]]
-    style: NotRequired[dict]
+Edge = TypedDict(
+    "Edge",
+    {
+        "animated": NotRequired[bool],
+        "ariaLabel": NotRequired[str],
+        "class": NotRequired[str],
+        "data": NotRequired[dict],
+        "deletable": NotRequired[bool],
+        "focusable": NotRequired[bool],
+        "hidden": NotRequired[bool],
+        "id": str,
+        "interactionWidth": NotRequired[float],
+        "label": NotRequired[str],
+        "labelBgBorderRadius": NotRequired[float],
+        "labelBgPadding": NotRequired[tuple[float, float]],
+        "labelBgStyle": NotRequired[dict],
+        "labelShowBg": NotRequired[bool],
+        "labelStyle": NotRequired[dict],
+        "markerEnd": NotRequired[Union[EdgeMarkerType, EdgeMarker]],
+        "markerStart": NotRequired[Union[EdgeMarkerType, EdgeMarker]],
+        "selectable": NotRequired[bool],
+        "source": str,
+        "style": NotRequired[dict],
+        "target": str,
+        "type": EdgeType,
+        "zIndex": NotRequired[int],
+    },
+)
 
 
 def create_edge(
@@ -152,6 +176,7 @@ def create_edge(
     marker_end: Optional[Union[EdgeMarkerType, EdgeMarker]] = None,
     style: Optional[dict] = None,
 ):
+    """Helper function to build an edge."""
     edge = Edge(
         id=f"{source_id}->{target_id}",
         source=source_id,
@@ -177,7 +202,7 @@ class Graph(TypedDict):
 
 class NodeEditor(HtmlElement):
     """
-    Node Editor based on VueFlow
+    Node Editor based on VueFlow.
 
     Args:
         background_pattern_color (html color string):
@@ -213,13 +238,58 @@ class NodeEditor(HtmlElement):
             ("show_mini_map", "showMiniMap"),
         ]
         self._event_names += [
-            ("node_click", "nodeClick"),
-            ("edge_click", "edgeClick"),
+            ("click_connect_end", "clickConnectEnd"),
+            ("click_connect_start", "clickConnectStart"),
             "connect",
-            ("nodes_change", "nodesChange"),
+            ("connect_end", "connectEnd"),
+            ("connect_start", "connectStart"),
+            ("edge_click", "edgeClick"),
+            ("edge_context_menu", "edgeContextMenu"),
+            ("edge_double_click", "edgeDoubleClick"),
+            ("edge_mouse_enter", "edgeMouseEnter"),
+            ("edge_mouse_leave", "edgeMouseLeave"),
+            ("edge_mouse_move", "edgeMouseMove"),
             ("edges_change", "edgesChange"),
+            ("edge_update", "edgeUpdate"),
+            ("edge_update_end", "edgeUpdateEnd"),
+            ("edge_update_start", "edgeUpdateStart"),
+            "error",
             "init",
+            ("mini_map_node_click", "miniMapNodeClick"),
+            ("mini_map_node_double_click", "miniMapNodeDoubleClick"),
+            ("mini_map_node_mouse_enter", "miniMapNodeMouseEnter"),
+            ("mini_map_node_mouse_leave", "miniMapNodeMouseLeave"),
+            ("mini_map_node_mouse_move", "miniMapNodeMouseMove"),
+            "move",
+            ("move_end", "moveEnd"),
+            ("move_start", "moveStart"),
+            ("node_click", "nodeClick"),
+            ("node_context_menu", "nodeContextMenu"),
+            ("node_double_click", "nodeDoubleClick"),
+            ("node_drag", "nodeDrag"),
+            ("node_drag_start", "nodeDragStart"),
             ("node_drag_stop", "nodeDragStop"),
+            ("node_mouse_enter", "nodeMouseEnter"),
+            ("node_mouse_leave", "nodeMouseLeave"),
+            ("node_mouse_move", "nodeMouseMove"),
+            ("nodes_change", "nodesChange"),
+            ("nodes_initialized", "nodesInitialized"),
+            ("pane_click", "paneClick"),
+            ("pane_context_menu", "paneContextMenu"),
+            ("pane_mouse_enter", "paneMouseEnter"),
+            ("pane_mouse_leave", "paneMouseLeave"),
+            ("pane_mouse_move", "paneMouseMove"),
+            ("pane_scroll", "paneScroll"),
+            ("selection_context_menu", "selectionContextMenu"),
+            ("selection_drag", "selectionDrag"),
+            ("selection_drag_start", "selectionDragStart"),
+            ("selection_drag_stop", "selectionDragStop"),
+            ("selection_end", "selectionEnd"),
+            ("selection_start", "selectionStart"),
+            ("update_node_internals", "updateNodeInternals"),
+            ("viewport_change", "viewportChange"),
+            ("viewport_change_end", "viewportChangeEnd"),
+            ("viewport_change_start", "viewportChangeStart"),
         ]
 
         self._nodes: list[Node] = []
@@ -291,64 +361,92 @@ class NodeEditor(HtmlElement):
             self._sync()
 
     def _sync(self):
+        """Synchronise VueFlow graph with this widget's internal state."""
         self.server.js_call(self.__ref, "setNodes", self._nodes)
         self.server.js_call(self.__ref, "setEdges", self._edges)
         self.graph_change(self._nodes, self._edges)
 
     def add_node(self, node: Node):
+        """Add a Node to the graph."""
         self._nodes.append(node)
         self.server.js_call(self.__ref, "addNodes", node)
         self.graph_change(self._nodes, self._edges)
 
     def add_edge(self, edge: Edge):
+        """Add an Edge to the graph."""
         self._edges.append(edge)
         self.server.js_call(self.__ref, "addEdges", edge)
         self.graph_change(self._nodes, self._edges)
 
     def get_node(self, id: str):
+        """Get a Node from its id. Returns None if not found."""
         for node in self._nodes:
             if node["id"] == id:
                 return node
         return None
 
     def get_edge(self, source: str, target: str):
+        """Get an Edge from its source and target. Returns None if not found."""
         for edge in self._edges:
             if edge["source"] == source and edge["target"] == target:
                 return edge
         return None
 
     def remove_node(self, node_id: str):
+        """Remove a Node from the graph. Does nothing if no node has id=`node_id`"""
         node = self.get_node(node_id)
-        if node:
+        if node is not None:
             self.server.js_call(self.__ref, "removeNodes", node_id)
             self._nodes.remove(node)
             self.graph_change(self._nodes, self._edges)
 
-    def remove_edge(self, edge: Edge):
-        self.server.js_call(self.__ref, "removeEdges", edge["id"])
-        self._edges.remove(edge)
+    def remove_edge(self, source: str, target: str):
+        """Remove an Edge from the graph. Does nothing if there is no edge from `source` to `target`."""
+        edge = self.get_edge(source, target)
+        if edge is not None:
+            self.server.js_call(self.__ref, "removeEdges", edge["id"])
+            self._edges.remove(edge)
+            self.graph_change(self._nodes, self._edges)
+
+    @property
+    def graph(self) -> Graph:
+        return Graph(nodes=self._nodes, edges=self._edges)
 
     def serialize_graph(self) -> str:
-        return str(
-            {
-                "nodes": self._nodes,
-                "edges": self._edges,
-            }
-        )
+        """Returns graph as a string representing a `Graph` object."""
+        return str(self.graph)
 
-    def deserialize_graph(self, graph_str: str):
+    def deserialize_graph(self, graph_str: str) -> bool:
+        """
+        Deserialize graph from a string representing a `Graph` object.
+
+        Returns False if deserialization produced any error, else True.
+        """
         try:
             graph = literal_eval(graph_str)
             self._nodes = graph["nodes"]
             self._edges = graph["edges"]
             self._sync()
-        except Exception as err:
-            error_msg = "Invalid graph string"
-            raise Exception(error_msg) from err
+        except Exception:
+            return False
+        return True
 
     def update_node(self, node_id: str, **kwargs):
+        """Update a node's property."""
         for node in self._nodes:
             if node["id"] == node_id:
                 node.update(**kwargs)
                 self._sync()
                 break
+
+    def update_edge(self, source: str, target: str, **kwargs):
+        """Update an edge's property."""
+        for edge in self._edges:
+            if edge["source"] == source and edge["target"] == target:
+                edge.update(**kwargs)
+                self._sync()
+                break
+
+    def fit_view(self):
+        """Fit VueFlow's view to show the entire graph (excluding hidden nodes)"""
+        self.server.js_call(self.__ref, "fitView")
