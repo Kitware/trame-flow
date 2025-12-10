@@ -180,14 +180,20 @@ class NodeEditor(HtmlElement):
     Node Editor based on VueFlow
 
     Args:
-        background_pattern_variant ("dots" or "lines"):
-            Pattern type in the background
         background_pattern_color (html color string):
-            Color of the pattern in the background
-        background_pattern_size (number):
-            Size of the pattern in the background
+            Color of the pattern in the background.
         background_pattern_gap (number):
-            Size of the gaps for the pattern in the background
+            Size of the gaps for the pattern in the background.
+        background_pattern_size (number):
+            Size of the pattern in the background.
+        background_pattern_variant ("dots" or "lines"):
+            Pattern type in the background.
+        show_controls (boolean):
+            Show the controls panel (zoom in, zoom out, fit view, lock graph).
+            Enabled by default.
+        show_mini_map (boolean):
+            Show the nodes mini map.
+            Enabled by default.
     """
 
     _next_id = 0
@@ -199,10 +205,12 @@ class NodeEditor(HtmlElement):
         )
 
         self._attr_names += [
-            ("background_pattern_variant", "backgroundPatternVariant"),
             ("background_pattern_color", "backgroundPatternColor"),
-            ("background_pattern_size", "backgroundPatternSize"),
             ("background_pattern_gap", "backgroundPatternGap"),
+            ("background_pattern_size", "backgroundPatternSize"),
+            ("background_pattern_variant", "backgroundPatternVariant"),
+            ("show_controls", "showControls"),
+            ("show_mini_map", "showMiniMap"),
         ]
         self._event_names += [
             ("node_click", "nodeClick"),

@@ -2,12 +2,14 @@ import "./style.css";
 import { VueFlow, useVueFlow } from "@vue-flow/core";
 import { Background } from "@vue-flow/background";
 import { MiniMap } from "@vue-flow/minimap";
+import { Controls } from "@vue-flow/controls";
 
 export default {
   components: {
     VueFlow,
     Background,
     MiniMap,
+    Controls,
   },
   props: {
     backgroundPatternVariant: {
@@ -26,6 +28,14 @@ export default {
       type: Number,
       default: 10,
     },
+    showControls: {
+      type: Boolean,
+      default: true,
+    },
+    showMiniMap: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup() {
     return {
@@ -33,14 +43,15 @@ export default {
     };
   },
   template: `
-    <vue-flow elevate-edges-on-select="true">
+    <vue-flow elevate-edges-on-select="true" fit-view-on-init="true">
       <background :variant="backgroundPatternVariant" :pattern-color="backgroundPatternColor" :size="backgroundPatternSize" :gap="backgroundPatternGap" />
 
       <template #node-text="nodeProps">
         {{nodeProps.data.label}}
       </template>
 
-      <mini-map />
+      <controls v-if="showControls" />
+      <mini-map v-if="showMiniMap" />
     </vue-flow>
   `,
 };
