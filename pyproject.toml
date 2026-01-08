@@ -108,7 +108,7 @@ version_variables = [
     "src/trame_flow/__init__.py:__version__",
 ]
 
-build_command = "uv build"
+build_command = "pip install uv && uv build"
 
 [tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
