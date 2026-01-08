@@ -7,15 +7,16 @@ authors = [
 ]
 dependencies = [
     "trame_client>=3.10",
+    "typing-extensions>=4.10.0",
 ]
 requires-python = ">=3.9"
 readme = "README.rst"
-license = {text = "Apache Software License"}
+license = {text = "MIT License"}
 keywords = ["Python", "Interactive", "Web", "Application", "Framework"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Web Environment",
-    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
@@ -36,6 +37,10 @@ dev = [
     "pytest >=6",
     "pytest-cov >=3",
     "nox",
+]
+examples = [
+    "trame>=3.12.0",
+    "trame-vuetify>=3.1.0",
 ]
 
 [build-system]
@@ -87,11 +92,12 @@ ignore = [
     "PLR09",   # Too many <...>
     "PLR2004", # Magic value used in comparison
     "ISC001",  # Conflicts with formatter
+    "PLC0415", # lazy import
 ]
 isort.required-imports = []
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["T20"]
+"tests/**" = ["T20", "PLC0415"]
 "noxfile.py" = ["T20"]
 "src/**" = ["SIM117"]
 [tool.semantic_release]
@@ -104,6 +110,6 @@ version_variables = [
 
 build_command = "uv build"
 
-[semantic_release.publish]
+[tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
 upload_to_vcs_release = true

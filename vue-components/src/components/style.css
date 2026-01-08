@@ -1,9 +1,8 @@
-.btnClick {
-  margin: 0 10px;
-  background: #f48fb1 !important;
-}
+/* these are necessary styles for vue flow */
+@import "@vue-flow/core/dist/style.css";
 
-.btnChange {
-  margin: 0 10px;
-  background: #ce93d8 !important;
-}
+/* this contains the default theme, these are optional styles */
+@import "@vue-flow/core/dist/theme-default.css";
+
+@import "@vue-flow/minimap/dist/style.css";
+@import "@vue-flow/controls/dist/style.css";

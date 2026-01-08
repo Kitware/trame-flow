@@ -1,34 +1,38 @@
 Trame Flow
 ----------------------------------------
 
-A node editor for trame using VueFlow
+A node editor for `trame <https://kitware.github.io/trame/>`_ based on `VueFlow <https://vueflow.dev/>`_.
 
 License
 ----------------------------------------
 
-This library is OpenSource and follow the Apache Software License
+This library is OpenSource and follow the MIT License.
 
 Installation
 ----------------------------------------
 
-Install the application/library
+Install the application/library.
 
 .. code-block:: console
 
     pip install trame-flow
 
+Usage
+-----
 
-Developement setup
+Examples can be found in the examples directory. To run them you need trame and trame-vuetify.
+
+Development setup
 ----------------------------------------
 
-We recommend using uv for setting up and managing a virtual environement for your development.
+We recommend using uv for setting up and managing a virtual environment for your development.
 
 .. code-block:: console
 
     # Create venv and install all dependencies
     uv sync --all-extras --dev
 
-    # Activate environement
+    # Activate environment
     source .venv/bin/activate
 
     # Install commit analysis
@@ -39,7 +43,7 @@ We recommend using uv for setting up and managing a virtual environement for you
     uv pip install -e .
 
 
-Build and install the Vue components
+Build and install the Vue components.
 
 .. code-block:: console
 

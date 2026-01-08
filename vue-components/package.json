@@ -18,6 +18,10 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
+    "@vue-flow/background": "^1.3.2",
+    "@vue-flow/controls": "^1.1.3",
+    "@vue-flow/core": "^1.47.0",
+    "@vue-flow/minimap": "^1.5.4"
   },
   "peerDependencies": {
     "vue": "^2.7.0 || >=3.0.0"
