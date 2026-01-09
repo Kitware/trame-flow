@@ -113,3 +113,8 @@ build_command = "pip install uv && uv build"
 [tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
 upload_to_vcs_release = true
+
+[tool.semantic_release.branches.other]
+match = ".*"
+prerelease_token = "rc"
+prerelease = true
