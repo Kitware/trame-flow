@@ -1,7 +1,7 @@
 from ast import literal_eval
 from typing import Callable, Literal, Optional, Union
 
-from trame_client.widgets.core import AbstractElement
+from trame_client.widgets.core import AbstractElement, Template
 from typing_extensions import NotRequired, TypedDict
 
 from .. import module
@@ -16,6 +16,7 @@ class HtmlElement(AbstractElement):
 
 __all__ = [
     "DEFAULT_EXTENT",
+    "CustomNode",
     "Dimensions",
     "Edge",
     "EdgeMarkerType",
@@ -49,7 +50,7 @@ class Dimensions(TypedDict):
 Extent = Union[Literal["parent"], list[list[float]]]
 DEFAULT_EXTENT = [[float("-inf"), float("-inf")], [float("+inf"), float("+inf")]]
 
-NodeType = Literal["default", "input", "output", "text"]
+NodeType = Literal["default", "input", "output"] | str
 
 
 Node = TypedDict(
@@ -114,8 +115,8 @@ def create_node(
         node["style"] = style
     if data:
         node["data"] = node["data"] | data
-    # set "text" node default css
-    if type == "text":
+    # set default node style for custom node
+    if type not in ["default", "input", "output"]:
         node["class"] = "vue-flow__node-default"
     return node
 
@@ -198,6 +199,19 @@ def create_edge(
 class Graph(TypedDict):
     nodes: list[Node]
     edges: list[Edge]
+
+
+class CustomNode(Template):
+    def __init__(self, type: str, var_name: str = "props", **kwargs):
+        """Shortcut to define a custom node's HTML.
+        This is equivalent to `Template(raw_attrs=["v-slot:node-myType=myProps"])`
+
+        :param type: Name of the custom node type.
+        :type type: str
+        :param var_name: Name of the node properties variable. (Default = "props")
+        :type var_name:  str
+        """
+        super().__init__(raw_attrs=[f"v-slot:node-{type}={var_name}"], **kwargs)
 
 
 class NodeEditor(HtmlElement):

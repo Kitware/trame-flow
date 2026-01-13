@@ -1,11 +1,12 @@
 from trame.app import TrameApp
 from trame.ui.vuetify3 import SinglePageLayout
+from trame.widgets.html import H4, P
 from trame.widgets.vuetify3 import (
     VBtn,
     VIcon,
     VSelect,
 )
-from trame_flow.widgets.flow import Node, NodeEditor, create_node
+from trame_flow.widgets.flow import CustomNode, Node, NodeEditor, create_node
 
 
 class Example(TrameApp):
@@ -26,6 +27,7 @@ class Example(TrameApp):
                 y=(self.next_node_id // 10) * 100,
                 type=self.state.node_type,
                 label=f"Node {self.next_node_id}",
+                data={"subtitle": "subtitle"},
             )
         )
         self.next_node_id += 1
@@ -42,7 +44,7 @@ class Example(TrameApp):
             with layout.toolbar:
                 VSelect(
                     label="Node type",
-                    items=("['default', 'input', 'output', 'text']",),
+                    items=("['default', 'input', 'output', 'text', 'title']",),
                     v_model=("node_type", "default"),
                     density="compact",
                     hide_details="true",
@@ -59,7 +61,12 @@ class Example(TrameApp):
                 ):
                     VIcon("mdi-minus")
 
-            self.vueflow = NodeEditor()
+            with NodeEditor() as self.vueflow:
+                with CustomNode("title"):
+                    H4("{{props.data.label}}")
+                    P("{{props.data.subtitle}}")
+                with CustomNode("text", var_name="nodeProps"):
+                    P("{{nodeProps.data.label}}")
 
             def on_graph_change(nodes, edges):
                 with self.state:
