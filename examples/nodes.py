@@ -6,12 +6,11 @@ from trame.widgets.vuetify3 import (
     VIcon,
     VSelect,
 )
+from trame_flow.module.core import Node, create_node
 from trame_flow.widgets.flow import (
     CustomNode,
     Handle,
-    Node,
     NodeEditor,
-    create_node,
 )
 
 

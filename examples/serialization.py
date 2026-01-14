@@ -6,7 +6,8 @@ from trame.widgets.vuetify3 import (
     VRow,
     VTextarea,
 )
-from trame_flow.widgets.flow import Node, NodeEditor
+from trame_flow.module.core import Node
+from trame_flow.widgets.flow import NodeEditor
 
 DEFAULT_GRAPH = """{
     "nodes": [

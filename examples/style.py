@@ -8,7 +8,8 @@ from trame.widgets.vuetify3 import (
     VRow,
     VSlider,
 )
-from trame_flow.widgets.flow import NodeEditor, create_node
+from trame_flow.module.core import create_node
+from trame_flow.widgets.flow import NodeEditor
 
 
 class Example(TrameApp):
