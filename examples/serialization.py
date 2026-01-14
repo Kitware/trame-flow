@@ -7,7 +7,7 @@ from trame.widgets.vuetify3 import (
     VTextarea,
 )
 from trame_flow.module.core import Node
-from trame_flow.widgets.flow import NodeEditor
+from trame_flow.widgets.flow import Background, Controls, NodeEditor
 
 DEFAULT_GRAPH = """{
     "nodes": [
@@ -123,8 +123,9 @@ class Example(TrameApp):
                 VContainer(fluid=True, classes="h-100"),
                 VRow(classes="h-100"),
             ):
-                with VCol():
-                    self.vueflow = NodeEditor()
+                with VCol(), NodeEditor() as self.vueflow:
+                    Background(gap=10, size=1, pattern_color="#81818a")
+                    Controls()
                 with VCol():
                     VTextarea(
                         density="compact",

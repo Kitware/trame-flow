@@ -9,7 +9,7 @@ from trame.widgets.vuetify3 import (
     VSlider,
 )
 from trame_flow.module.core import create_node
-from trame_flow.widgets.flow import NodeEditor
+from trame_flow.widgets.flow import Background, Controls, NodeEditor
 
 
 class Example(TrameApp):
@@ -48,7 +48,11 @@ class Example(TrameApp):
                 VRow(classes="h-100"),
             ):
                 with VCol():
-                    self.vueflow = NodeEditor(show_mini_map=False, show_controls=False)
+                    with NodeEditor(
+                        show_mini_map=False, show_controls=False
+                    ) as self.vueflow:
+                        Background(gap=10, size=1, pattern_color="#81818a")
+                        Controls()
                     self.vueflow.add_node(
                         create_node(id="0", type="default", x=0, y=0, label="My node")
                     )

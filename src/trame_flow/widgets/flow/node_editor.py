@@ -68,14 +68,6 @@ class NodeEditor(HtmlElement):
             **kwargs,
         )
 
-        self._attr_names += [
-            ("background_pattern_color", "backgroundPatternColor"),
-            ("background_pattern_gap", "backgroundPatternGap"),
-            ("background_pattern_size", "backgroundPatternSize"),
-            ("background_pattern_variant", "backgroundPatternVariant"),
-            ("show_controls", "showControls"),
-            ("show_mini_map", "showMiniMap"),
-        ]
         self._event_names += [
             ("click_connect_end", "clickConnectEnd"),
             ("click_connect_start", "clickConnectStart"),
