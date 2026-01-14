@@ -23,6 +23,7 @@ __all__ = [
     "EdgeType",
     "Extent",
     "Graph",
+    "Handle",
     "HandlePosition",
     "Node",
     "NodeEditor",
@@ -212,6 +213,32 @@ class CustomNode(Template):
         :type var_name:  str
         """
         super().__init__(raw_attrs=[f"v-slot:node-{type}={var_name}"], **kwargs)
+
+
+class Handle(HtmlElement):
+    def __init__(
+        self,
+        position: HandlePosition,
+        type: Literal["source", "target"],
+        **kwargs,
+    ):
+        """Handle used to connect a node to other nodes. Use it inside a `CustomNode`.
+
+        :param position: Position of the handle.
+        :param type: Type of the handle.
+        :param connectable: (Optional) Boolean, integer for maximum connection number or function that returns a boolean.
+        :param id: (Optional) ID of the handle. Useful when using multiple source handles or target handles.
+        :param connection_mode: (Optional) Defines if a handle can be connected to another handle with the same type. "loose" (default) or "strict".
+        """
+        super().__init__("Handle", position=position, type=type, **kwargs)
+
+        self._attr_names += [
+            "connectable",
+            ("connection_mode", "connection-mode"),
+            "id",
+            "position",
+            "type",
+        ]
 
 
 class NodeEditor(HtmlElement):

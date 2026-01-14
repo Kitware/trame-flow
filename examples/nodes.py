@@ -6,7 +6,13 @@ from trame.widgets.vuetify3 import (
     VIcon,
     VSelect,
 )
-from trame_flow.widgets.flow import CustomNode, Node, NodeEditor, create_node
+from trame_flow.widgets.flow import (
+    CustomNode,
+    Handle,
+    Node,
+    NodeEditor,
+    create_node,
+)
 
 
 class Example(TrameApp):
@@ -63,6 +69,7 @@ class Example(TrameApp):
 
             with NodeEditor() as self.vueflow:
                 with CustomNode("title"):
+                    Handle(type="target", position="top")
                     H4("{{props.data.label}}")
                     P("{{props.data.subtitle}}")
                 with CustomNode("text", var_name="nodeProps"):
