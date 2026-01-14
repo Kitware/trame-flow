@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v2.0.0 (2026-01-14)
+
+### Features
+
+- Add all vueflow components
+  ([`a8a6819`](https://github.com/Kitware/trame-flow/commit/a8a681942ae01bf1a6e1667b57fcbce58ef038bf))
+
+- **CustomNode**: Add Handle component
+  ([`90254d2`](https://github.com/Kitware/trame-flow/commit/90254d2f3b398940e590bba006573d8ac7e2dee9))
+
+### Refactoring
+
+- Separate core classes and widgets
+  ([`0ce0e28`](https://github.com/Kitware/trame-flow/commit/0ce0e286400eb128d0f3c2f258eaddc5dfc1be5e))
+
+
 ## v1.1.0 (2026-01-13)
 
 ### Documentation
