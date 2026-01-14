@@ -6,7 +6,16 @@ from trame.widgets.vuetify3 import (
     VIcon,
     VSelect,
 )
-from trame_flow.widgets.flow import CustomNode, Node, NodeEditor, create_node
+from trame_flow.module.core import Node, create_node
+from trame_flow.widgets.flow import (
+    Background,
+    Controls,
+    CustomNode,
+    Handle,
+    NodeEditor,
+    NodeResizer,
+    NodeToolbar,
+)
 
 
 class Example(TrameApp):
@@ -44,7 +53,9 @@ class Example(TrameApp):
             with layout.toolbar:
                 VSelect(
                     label="Node type",
-                    items=("['default', 'input', 'output', 'text', 'title']",),
+                    items=(
+                        "['default', 'input', 'output', 'text', 'title', 'toolbar']",
+                    ),
                     v_model=("node_type", "default"),
                     density="compact",
                     hide_details="true",
@@ -62,11 +73,22 @@ class Example(TrameApp):
                     VIcon("mdi-minus")
 
             with NodeEditor() as self.vueflow:
+                Background(gap=10, size=1, pattern_color="#81818a")
+                Controls()
                 with CustomNode("title"):
+                    Handle(type="target", position="top")
                     H4("{{props.data.label}}")
                     P("{{props.data.subtitle}}")
                 with CustomNode("text", var_name="nodeProps"):
+                    NodeResizer()
                     P("{{nodeProps.data.label}}")
+                with CustomNode("toolbar"):
+                    with NodeToolbar(
+                        is_visible=True,
+                        style="background: darkgray; padding: 4px; font-size: 1.2em; border-radius: 4px",
+                    ):
+                        P("This is a toolbar")
+                    P("{{props.data.label}}")
 
             def on_graph_change(nodes, edges):
                 with self.state:

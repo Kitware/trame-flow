@@ -1,3 +1,25 @@
 def test_import():
-    from trame.widgets.flow import NodeEditor
-    from trame_flow.widgets.flow import NodeEditor  # noqa: F401,F811
+    from trame.widgets.flow import (
+        Background,
+        Controls,
+        ControlsButton,
+        CustomNode,
+        Handle,
+        MiniMap,
+        MiniMapNode,
+        NodeEditor,
+        NodeResizer,
+        NodeToolbar,
+    )
+    from trame_flow.widgets.flow import (  # noqa: F401,F811
+        Background,
+        Controls,
+        ControlsButton,
+        CustomNode,
+        Handle,
+        MiniMap,
+        MiniMapNode,
+        NodeEditor,
+        NodeResizer,
+        NodeToolbar,
+    )
