@@ -36,7 +36,7 @@ class Dimensions(TypedDict):
 Extent = Union[Literal["parent"], list[list[float]]]
 DEFAULT_EXTENT = [[float("-inf"), float("-inf")], [float("+inf"), float("+inf")]]
 
-NodeType = Literal["default", "input", "output"] | str
+NodeType = Union[Literal["default", "input", "output"], str]
 
 
 Node = TypedDict(
@@ -100,7 +100,7 @@ def create_node(
     if style:
         node["style"] = style
     if data:
-        node["data"] = node["data"] | data
+        node["data"] = node["data"] or data
     # set default node style for custom node
     if type not in ["default", "input", "output"]:
         node["class"] = "vue-flow__node-default"
@@ -145,8 +145,10 @@ Edge = TypedDict(
         "markerStart": NotRequired[Union[EdgeMarkerType, EdgeMarker]],
         "selectable": NotRequired[bool],
         "source": str,
+        "sourceHandle": NotRequired[str],
         "style": NotRequired[dict],
         "target": str,
+        "targetHandle": NotRequired[str],
         "type": EdgeType,
         "zIndex": NotRequired[int],
     },
