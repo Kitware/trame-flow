@@ -1,5 +1,5 @@
 from ast import literal_eval
-from typing import Callable, Literal
+from typing import Callable, Literal, Optional
 
 from trame_client.widgets.core import Template
 
@@ -141,17 +141,27 @@ class NodeEditor(HtmlElement):
 
         self.graph_change: Callable[[list[Node], list[Edge]], None] = lambda *_: None
 
-    def on_connect(self, event):
-        if not self.get_edge(source=event["source"], target=event["target"]):
-            self.add_edge(
-                Edge(
-                    source=event["source"],
-                    target=event["target"],
-                    id=f"{event['source']}->{event['target']}",
-                    type="default",
-                    animated=False,
-                )
+    def on_connect(self, event: dict):
+        event_source_handle = event.get("sourceHandle")
+        event_target_handle = event.get("targetHandle")
+        if not self.get_edge(
+            source=event["source"],
+            target=event["target"],
+            source_handle=event_source_handle,
+            target_handle=event_target_handle,
+        ):
+            edge = Edge(
+                source=event["source"],
+                target=event["target"],
+                id=f"{event['source']}{f'({event_source_handle})' if event_source_handle is not None else ''}->{event['target']}{f'({event_target_handle})' if event_target_handle is not None else ''}",
+                type="default",
+                animated=False,
             )
+            if event_source_handle is not None:
+                edge["sourceHandle"] = event_source_handle
+            if event_target_handle is not None:
+                edge["targetHandle"] = event_target_handle
+            self.add_edge(edge)
 
     def on_nodes_change(self, events):
         need_sync = False
@@ -164,11 +174,16 @@ class NodeEditor(HtmlElement):
         if need_sync:
             self._sync()
 
-    def on_edges_change(self, events):
+    def on_edges_change(self, events: list[dict]):
         need_sync = False
         for event in events:
             if event["type"] == "remove":
-                edge = self.get_edge(event["source"], event["target"])
+                edge = self.get_edge(
+                    event["source"],
+                    event["target"],
+                    event.get("sourceHandle"),
+                    event.get("targetHandle"),
+                )
                 if edge:
                     self._edges.remove(edge)
                     need_sync = True
@@ -216,10 +231,21 @@ class NodeEditor(HtmlElement):
                 return node
         return None
 
-    def get_edge(self, source: str, target: str):
+    def get_edge(
+        self,
+        source: str,
+        target: str,
+        source_handle: Optional[str] = None,
+        target_handle: Optional[str] = None,
+    ):
         """Get an Edge from its source and target. Returns None if not found."""
         for edge in self._edges:
-            if edge["source"] == source and edge["target"] == target:
+            if (
+                edge["source"] == source
+                and edge["target"] == target
+                and source_handle == edge.get("sourceHandle")
+                and target_handle == edge.get("targetHandle")
+            ):
                 return edge
         return None
 
@@ -231,9 +257,15 @@ class NodeEditor(HtmlElement):
             self._nodes.remove(node)
             self.graph_change(self._nodes, self._edges)
 
-    def remove_edge(self, source: str, target: str):
+    def remove_edge(
+        self,
+        source: str,
+        target: str,
+        source_handle: Optional[str] = None,
+        target_handle: Optional[str] = None,
+    ):
         """Remove an Edge from the graph. Does nothing if there is no edge from `source` to `target`."""
-        edge = self.get_edge(source, target)
+        edge = self.get_edge(source, target, source_handle, target_handle)
         if edge is not None:
             self.server.js_call(self.__ref, "removeEdges", edge["id"])
             self._edges.remove(edge)
