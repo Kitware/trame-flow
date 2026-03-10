@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v2.1.0 (2026-03-10)
+
+### Continuous Integration
+
+- Bump validate-pyproject to v0.25
+  ([`f56b5e0`](https://github.com/Kitware/trame-flow/commit/f56b5e043f551c6edaccd43c1302306ca9e3bfad))
+
+### Documentation
+
+- **examples**: Add example with nodes with multiple handles
+  ([`236ad89`](https://github.com/Kitware/trame-flow/commit/236ad89d345578856cc1e750b6988e35524c1db6))
+
+### Features
+
+- Add support for multiple handles with the same type
+  ([`319fb2b`](https://github.com/Kitware/trame-flow/commit/319fb2b032beb6856271109561ba93e7fb0468c2))
+
+
 ## v2.0.0 (2026-01-14)
 
 ### Features
