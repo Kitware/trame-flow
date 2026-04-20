@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v2.2.0 (2026-04-20)
+
+### Documentation
+
+- Use direct link for screenshot
+  ([`d4ab4fe`](https://github.com/Kitware/trame-flow/commit/d4ab4fead9bdd86ec7bdc5837809d114b75595d9))
+
+### Features
+
+- **NodeEditor**: Add setters and clear_graph function
+  ([`653c7be`](https://github.com/Kitware/trame-flow/commit/653c7be3abc2f8cf44ff8f2749794e486156fef8))
+
+
 ## v2.1.0 (2026-03-10)
 
 ### Continuous Integration
