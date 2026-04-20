@@ -1,4 +1,5 @@
 from ast import literal_eval
+from collections.abc import Iterable
 from typing import Callable, Literal, Optional
 
 from trame_client.widgets.core import Template
@@ -275,6 +276,30 @@ class NodeEditor(HtmlElement):
     def graph(self) -> Graph:
         return Graph(nodes=self._nodes, edges=self._edges)
 
+    @graph.setter
+    def graph(self, graph: Graph):
+        self._nodes = graph["nodes"]
+        self._edges = graph["edges"]
+        self._sync()
+
+    @property
+    def nodes(self) -> list[Node]:
+        return self._nodes
+
+    @nodes.setter
+    def nodes(self, nodes: Iterable[Node]):
+        self._nodes = list(nodes)
+        self._sync()
+
+    @property
+    def edges(self) -> list[Edge]:
+        return self._edges
+
+    @edges.setter
+    def edges(self, edges: Iterable[Edge]):
+        self._edges = list(edges)
+        self._sync()
+
     def serialize_graph(self) -> str:
         """Returns graph as a string representing a `Graph` object."""
         return str(self.graph)
@@ -286,10 +311,7 @@ class NodeEditor(HtmlElement):
         Returns False if deserialization produced any error, else True.
         """
         try:
-            graph = literal_eval(graph_str)
-            self._nodes = graph["nodes"]
-            self._edges = graph["edges"]
-            self._sync()
+            self.graph = literal_eval(graph_str)
         except Exception:
             return False
         return True
@@ -313,3 +335,9 @@ class NodeEditor(HtmlElement):
     def fit_view(self):
         """Fit VueFlow's view to show the entire graph (excluding hidden nodes)"""
         self.server.js_call(self.__ref, "fitView")
+
+    def clear_graph(self):
+        """Remove every edges and then every nodes."""
+        self._nodes = []
+        self._edges = []
+        self._sync()

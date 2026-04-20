@@ -3,7 +3,8 @@ Trame Flow
 
 A node editor for `trame <https://kitware.github.io/trame/>`_ based on `VueFlow <https://vueflow.dev/>`_.
 
-.. image:: screenshot.png
+.. image:: https://raw.githubusercontent.com/Kitware/trame-flow/refs/heads/main/screenshot.png
+    :alt: Usage example of trame-flow with custom node and edge styles.
 
 License
 ----------------------------------------
