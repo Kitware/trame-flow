@@ -3,7 +3,7 @@ name = "trame-flow"
 version = "2.2.0"
 description = "A node editor for trame using VueFlow"
 authors = [
-    {name = "Trame Developer"},
+    {name = "Kitware Inc."},
 ]
 dependencies = [
     "trame_client>=3.10",
