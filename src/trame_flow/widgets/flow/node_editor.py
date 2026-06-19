@@ -45,14 +45,14 @@ class Handle(HtmlElement):
         :param type: Type of the handle.
         :param connectable: (Optional) Boolean, integer for maximum connection number or function that returns a boolean.
         :param id: (Optional) ID of the handle. Useful when using multiple source handles or target handles.
-        :param connection_mode: (Optional) Defines if a handle can be connected to another handle with the same type. "loose" (default) or "strict".
+        :param is_valid_connection: (Optional) Must be a JS function expression that takes a connection object and returns a bool indicating if it is valid.
         """
         super().__init__("Handle", position=position, type=type, **kwargs)
 
         self._attr_names += [
             "connectable",
-            ("connection_mode", "connection-mode"),
             "id",
+            ("is_valid_connection", "isValidConnection"),
             "position",
             "type",
         ]
@@ -64,10 +64,19 @@ class NodeEditor(HtmlElement):
     _next_id = 0
 
     def __init__(self, **kwargs):
+        """
+        :param connection_mode: (Optional) Defines if a handle can be connected to another handle with the same type. "loose" (default) or "strict".
+        :param is_valid_connection: (Optional) Must be a JS function expression that takes a connection object and returns a bool indicating if it is valid.
+        """
         super().__init__(
             "node-editor",
             **kwargs,
         )
+
+        self._attr_names += [
+            ("connection_mode", "connectionMode"),
+            ("is_valid_connection", "isValidConnection"),
+        ]
 
         self._event_names += [
             ("click_connect_end", "clickConnectEnd"),
