@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.2.1 (2026-06-19)
+
+### Bug Fixes
+
+- Fix connection-mode
+  ([`65c62dc`](https://github.com/Kitware/trame-flow/commit/65c62dcaa9c1acf3c463ac5a3735691f20e972a9))
+
+
 ## v2.2.0 (2026-04-20)
 
 ### Documentation
