@@ -100,7 +100,7 @@ def create_node(
     if style:
         node["style"] = style
     if data:
-        node["data"] = node["data"] or data
+        node["data"].update(data)
     # set default node style for custom node
     if type not in ["default", "input", "output"]:
         node["class"] = "vue-flow__node-default"
