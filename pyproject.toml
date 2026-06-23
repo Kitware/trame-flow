@@ -1,6 +1,6 @@
 [project]
 name = "trame-flow"
-version = "2.2.1"
+version = "2.2.2"
 description = "A node editor for trame using VueFlow"
 authors = [
     {name = "Kitware Inc."},

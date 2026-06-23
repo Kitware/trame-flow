@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v2.2.2 (2026-06-23)
+
+### Bug Fixes
+
+- Fix ignore data argument in create_node
+  ([`056a481`](https://github.com/Kitware/trame-flow/commit/056a481a26a44e3c286e4c759bf2e47638aad05c))
+
+
 ## v2.2.1 (2026-06-19)
 
 ### Bug Fixes
